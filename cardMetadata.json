@@ -1,0 +1,422 @@
+{
+    "1":  {
+              "title":  "零號機庫・黃昏出擊",
+              "image":  "/assets/cards/card_1.jpg?v=fix7",
+              "style":  "80年代手繪動畫原畫鉛筆線稿風 (Studio Genga)",
+              "source":  "Studio Genga Production Key-Frame Pipeline"
+          },
+    "2":  {
+              "title":  "赤翼瓦爾基里・原畫分鏡",
+              "image":  "/assets/cards/card_2.jpg?v=fix7",
+              "style":  "80年代手繪動畫原畫鉛筆線稿風 (Studio Genga)",
+              "source":  "Gemini Studio Genga Reference (#02 Anchor)"
+          },
+    "3":  {
+              "title":  "重裝甲整備班長・蕾娜",
+              "image":  "/assets/cards/card_3.jpg?v=fix7",
+              "style":  "80年代手繪動畫原畫鉛筆線稿風 (Studio Genga)",
+              "source":  "Studio Genga Production Key-Frame Pipeline"
+          },
+    "4":  {
+              "title":  "軌道電梯防衛戰",
+              "image":  "/assets/cards/card_4.jpg?v=fix7",
+              "style":  "80年代手繪動畫原畫鉛筆線稿風 (Studio Genga)",
+              "source":  "Studio Genga Production Key-Frame Pipeline"
+          },
+    "5":  {
+              "title":  "殘陽下的斷刃機神",
+              "image":  "/assets/cards/card_5.jpg?v=fix7",
+              "style":  "80年代手繪動畫原畫鉛筆線稿風 (Studio Genga)",
+              "source":  "Studio Genga Production Key-Frame Pipeline"
+          },
+    "6":  {
+              "title":  "雙子同步率測試",
+              "image":  "/assets/cards/card_6.jpg?v=fix7",
+              "style":  "80年代手繪動畫原畫鉛筆線稿風 (Studio Genga)",
+              "source":  "Studio Genga Production Key-Frame Pipeline"
+          },
+    "7":  {
+              "title":  "艦橋戰術通信官",
+              "image":  "/assets/cards/card_7.jpg?v=fix7",
+              "style":  "80年代手繪動畫原畫鉛筆線稿風 (Studio Genga)",
+              "source":  "Studio Genga Production Key-Frame Pipeline"
+          },
+    "8":  {
+              "title":  "成層圈超音速迎擊",
+              "image":  "/assets/cards/card_8.jpg?v=fix7",
+              "style":  "80年代手繪動畫原畫鉛筆線稿風 (Studio Genga)",
+              "source":  "Studio Genga Production Key-Frame Pipeline"
+          },
+    "9":  {
+              "title":  "廢墟都市的裝甲偵察兵",
+              "image":  "/assets/cards/card_9.jpg?v=fix7",
+              "style":  "80年代手繪動畫原畫鉛筆線稿風 (Studio Genga)",
+              "source":  "Studio Genga Production Key-Frame Pipeline"
+          },
+    "10":  {
+               "title":  "最終決戰・陽電子砲充能",
+               "image":  "/assets/cards/card_10.jpg?v=fix7",
+               "style":  "80年代手繪動畫原畫鉛筆線稿風 (Studio Genga)",
+               "source":  "Studio Genga Production Key-Frame Pipeline"
+           },
+    "11":  {
+               "title":  "機庫天台的夕陽咖啡",
+               "image":  "/assets/cards/card_11.jpg?v=fix7",
+               "style":  "80年代手繪動畫原畫鉛筆線稿風 (Studio Genga)",
+               "source":  "Studio Genga Production Key-Frame Pipeline"
+           },
+    "12":  {
+               "title":  "覺醒暴走・琥珀光翼",
+               "image":  "/assets/cards/card_12.jpg?v=fix7",
+               "style":  "80年代手繪動畫原畫鉛筆線稿風 (Studio Genga)",
+               "source":  "Studio Genga Production Key-Frame Pipeline"
+           },
+    "13":  {
+               "title":  "櫻吹雪的放課後鐵道",
+               "image":  "/assets/cards/card_13.jpg?v=fix7",
+               "style":  "透明水彩同人畫集 × 青春光影風",
+               "source":  "AI Horde (Dreamshaper)"
+           },
+    "14":  {
+               "title":  "夏空頂樓的紙飛機",
+               "image":  "/assets/cards/card_14.jpg?v=fix7",
+               "style":  "透明水彩同人畫集 × 青春光影風",
+               "source":  "AI Horde (Flat-2D Animerge)"
+           },
+    "15":  {
+               "title":  "雨後繡球花與透明傘",
+               "image":  "/assets/cards/card_15.jpg?v=fix7",
+               "style":  "透明水彩同人畫集 × 青春光影風",
+               "source":  "AI Horde Anime Model"
+           },
+    "16":  {
+               "title":  "音樂教室的窗邊長笛",
+               "image":  "/assets/cards/card_16.jpg?v=fix7",
+               "style":  "透明水彩同人畫集 × 青春光影風",
+               "source":  "AI Horde Anime Model"
+           },
+    "17":  {
+               "title":  "夏日祭典的金魚氣球",
+               "image":  "/assets/cards/card_17.jpg?v=fix7",
+               "style":  "透明水彩同人畫集 × 青春光影風",
+               "source":  "AI Horde Anime Model"
+           },
+    "18":  {
+               "title":  "海風單車與向日葵坡道",
+               "image":  "/assets/cards/card_18.jpg?v=fix7",
+               "style":  "透明水彩同人畫集 × 青春光影風",
+               "source":  "AI Horde Anime Model"
+           },
+    "19":  {
+               "title":  "圖書館角落的午後睡顏",
+               "image":  "/assets/cards/card_19.jpg?v=fix7",
+               "style":  "透明水彩同人畫集 × 青春光影風",
+               "source":  "AI Horde Anime Model"
+           },
+    "20":  {
+               "title":  "星象儀下的玻璃彈珠",
+               "image":  "/assets/cards/card_20.jpg?v=fix7",
+               "style":  "透明水彩同人畫集 × 青春光影風",
+               "source":  "AI Horde Anime Model"
+           },
+    "21":  {
+               "title":  "草莓芭菲與喫茶店約會",
+               "image":  "/assets/cards/card_21.jpg?v=fix7",
+               "style":  "透明水彩同人畫集 × 青春光影風",
+               "source":  "AI Horde (Flat-2D Animerge)"
+           },
+    "22":  {
+               "title":  "初雪車站的粉色圍巾",
+               "image":  "/assets/cards/card_22.jpg?v=fix7",
+               "style":  "透明水彩同人畫集 × 青春光影風",
+               "source":  "AI Horde (Flat-2D Animerge)"
+           },
+    "23":  {
+               "title":  "美術社的向晚水彩畫架",
+               "image":  "/assets/cards/card_23.jpg?v=fix7",
+               "style":  "透明水彩同人畫集 × 青春光影風",
+               "source":  "AI Horde Anime Model"
+           },
+    "24":  {
+               "title":  "蒲公英原野的微風協奏",
+               "image":  "/assets/cards/card_24.jpg?v=fix7",
+               "style":  "透明水彩同人畫集 × 青春光影風",
+               "source":  "AI Horde Anime Model"
+           },
+    "25":  {
+               "title":  "畢業典禮的花束告白",
+               "image":  "/assets/cards/card_25.jpg?v=fix7",
+               "style":  "透明水彩同人畫集 × 青春光影風",
+               "source":  "AI Horde (Flat-2D Animerge)"
+           },
+    "26":  {
+               "title":  "翡翠森的古語詠唱者",
+               "image":  "/assets/cards/card_26.jpg?v=fix7",
+               "style":  "王道奇幻設定集 × 吉田明彥畫風",
+               "source":  "Gemini AI Studio Original"
+           },
+    "27":  {
+               "title":  "風精靈契約・翠翼精靈",
+               "image":  "/assets/cards/card_27.jpg?v=fix7",
+               "style":  "王道奇幻設定集 × 吉田明彥畫風",
+               "source":  "Parchment Fantasy Artbook Pipeline"
+           },
+    "28":  {
+               "title":  "白銀薔薇與畫架秘林",
+               "image":  "/assets/cards/card_28.jpg?v=fix7",
+               "style":  "王道奇幻設定集 × 吉田明彥畫風",
+               "source":  "Gemini AI Studio Original"
+           },
+    "29":  {
+               "title":  "世界樹根部的鍊金藥師",
+               "image":  "/assets/cards/card_29.jpg?v=fix7",
+               "style":  "王道奇幻設定集 × 吉田明彥畫風",
+               "source":  "AI Horde Anime Model"
+           },
+    "30":  {
+               "title":  "幼龍棲木的馴龍少女",
+               "image":  "/assets/cards/card_30.jpg?v=fix7",
+               "style":  "王道奇幻設定集 × 吉田明彥畫風",
+               "source":  "AI Horde (Deliberate)"
+           },
+    "31":  {
+               "title":  "星盤塔的占星賢者",
+               "image":  "/assets/cards/card_31.jpg?v=fix7",
+               "style":  "王道奇幻設定集 × 吉田明彥畫風",
+               "source":  "Parchment Fantasy Artbook Pipeline"
+           },
+    "32":  {
+               "title":  "迷霧濕地的吟遊豎琴師",
+               "image":  "/assets/cards/card_32.jpg?v=fix7",
+               "style":  "王道奇幻設定集 × 吉田明彥畫風",
+               "source":  "Parchment Fantasy Artbook Pipeline"
+           },
+    "33":  {
+               "title":  "雙劍舞孃與沙海綠洲",
+               "image":  "/assets/cards/card_33.jpg?v=fix7",
+               "style":  "王道奇幻設定集 × 吉田明彥畫風",
+               "source":  "AI Horde Anime Model"
+           },
+    "34":  {
+               "title":  "古代魔導書庫的守護者",
+               "image":  "/assets/cards/card_34.jpg?v=fix7",
+               "style":  "王道奇幻設定集 × 吉田明彥畫風",
+               "source":  "Parchment Fantasy Artbook Pipeline"
+           },
+    "35":  {
+               "title":  "獅鷲騎士的浮空島巡航",
+               "image":  "/assets/cards/card_35.jpg?v=fix7",
+               "style":  "王道奇幻設定集 × 吉田明彥畫風",
+               "source":  "AI Horde Anime Model"
+           },
+    "36":  {
+               "title":  "荊棘王冠的森林德魯伊",
+               "image":  "/assets/cards/card_36.jpg?v=fix7",
+               "style":  "王道奇幻設定集 × 吉田明彥畫風",
+               "source":  "Parchment Fantasy Artbook Pipeline"
+           },
+    "37":  {
+               "title":  "發條魔偶與工坊少女",
+               "image":  "/assets/cards/card_37.jpg?v=fix7",
+               "style":  "王道奇幻設定集 × 吉田明彥畫風",
+               "source":  "Parchment Fantasy Artbook Pipeline"
+           },
+    "38":  {
+               "title":  "聖堂刺客的月下翠影",
+               "image":  "/assets/cards/card_38.jpg?v=fix7",
+               "style":  "王道奇幻設定集 × 吉田明彥畫風",
+               "source":  "AI Horde Anime Model"
+           },
+    "39":  {
+               "title":  "誓約聖劍的湖畔加冕",
+               "image":  "/assets/cards/card_39.jpg?v=fix7",
+               "style":  "王道奇幻設定集 × 吉田明彥畫風",
+               "source":  "AI Horde Anime Model"
+           },
+    "40":  {
+               "title":  "秋葉原雨夜的電競少年",
+               "image":  "/assets/cards/card_40.jpg?v=fix7",
+               "style":  "涉谷系潮流撞色 × 米山舞視覺風",
+               "source":  "AI Horde (Flat-2D Animerge)"
+           },
+    "41":  {
+               "title":  "澀谷十字路口的滑板駭客",
+               "image":  "/assets/cards/card_41.jpg?v=fix7",
+               "style":  "涉谷系潮流撞色 × 米山舞視覺風",
+               "source":  "AI Horde (Flat-2D Animerge)"
+           },
+    "42":  {
+               "title":  "地下音遊機台的連擊女王",
+               "image":  "/assets/cards/card_42.jpg?v=fix7",
+               "style":  "涉谷系潮流撞色 × 米山舞視覺風",
+               "source":  "AI Horde Anime Model"
+           },
+    "43":  {
+               "title":  "深夜便利商店的改造人少女",
+               "image":  "/assets/cards/card_43.jpg?v=fix7",
+               "style":  "涉谷系潮流撞色 × 米山舞視覺風",
+               "source":  "AI Horde Anime Model"
+           },
+    "44":  {
+               "title":  "電光藍貝斯手的極限獨奏",
+               "image":  "/assets/cards/card_44.jpg?v=fix7",
+               "style":  "涉谷系潮流撞色 × 米山舞視覺風",
+               "source":  "AI Horde Anime Model"
+           },
+    "45":  {
+               "title":  "無人機快遞的跑酷少女",
+               "image":  "/assets/cards/card_45.jpg?v=fix7",
+               "style":  "涉谷系潮流撞色 × 米山舞視覺風",
+               "source":  "AI Horde Anime Model"
+           },
+    "46":  {
+               "title":  "復古掌機與像素幽靈暴走",
+               "image":  "/assets/cards/card_46.jpg?v=fix7",
+               "style":  "涉谷系潮流撞色 × 米山舞視覺風",
+               "source":  "AI Horde Anime Model"
+           },
+    "47":  {
+               "title":  "虛擬歌姬的雷射舞台降臨",
+               "image":  "/assets/cards/card_47.jpg?v=fix7",
+               "style":  "涉谷系潮流撞色 × 米山舞視覺風",
+               "source":  "AI Horde Anime Model"
+           },
+    "48":  {
+               "title":  "街頭塗鴉客的霓虹噴罐",
+               "image":  "/assets/cards/card_48.jpg?v=fix7",
+               "style":  "涉谷系潮流撞色 × 米山舞視覺風",
+               "source":  "AI Horde Anime Model"
+           },
+    "49":  {
+               "title":  "重機騎士的首都高殘影",
+               "image":  "/assets/cards/card_49.jpg?v=fix7",
+               "style":  "涉谷系潮流撞色 × 米山舞視覺風",
+               "source":  "AI Horde Anime Model"
+           },
+    "50":  {
+               "title":  "多螢幕秘密基地的情報屋",
+               "image":  "/assets/cards/card_50.jpg?v=fix7",
+               "style":  "涉谷系潮流撞色 × 米山舞視覺風",
+               "source":  "AI Horde Anime Model"
+           },
+    "51":  {
+               "title":  "高空電塔的電磁溜溜球手",
+               "image":  "/assets/cards/card_51.jpg?v=fix7",
+               "style":  "涉谷系潮流撞色 × 米山舞視覺風",
+               "source":  "AI Horde Anime Model"
+           },
+    "52":  {
+               "title":  "合成器DJ的午夜音波浪潮",
+               "image":  "/assets/cards/card_52.jpg?v=fix7",
+               "style":  "涉谷系潮流撞色 × 米山舞視覺風",
+               "source":  "AI Horde Anime Model"
+           },
+    "53":  {
+               "title":  "機械柴犬與涉谷潮男",
+               "image":  "/assets/cards/card_53.jpg?v=fix7",
+               "style":  "涉谷系潮流撞色 × 米山舞視覺風",
+               "source":  "AI Horde Anime Model"
+           },
+    "54":  {
+               "title":  "次元裂縫的8-Bit最終魔王戰",
+               "image":  "/assets/cards/card_54.jpg?v=fix7",
+               "style":  "涉谷系潮流撞色 × 米山舞視覺風",
+               "source":  "AI Horde Anime Model"
+           },
+    "55":  {
+               "title":  "彼岸花海的白狐巫女",
+               "image":  "/assets/cards/card_55.jpg?v=fix7",
+               "style":  "浮世繪和風哥德 × 雙色極簡怪談風",
+               "source":  "AI Horde (Flat-2D Animerge)"
+           },
+    "56":  {
+               "title":  "百鬼夜行的紫煙魔女",
+               "image":  "/assets/cards/card_56.jpg?v=fix7",
+               "style":  "浮世繪和風哥德 × 雙色極簡怪談風",
+               "source":  "AI Horde (Deliberate)"
+           },
+    "57":  {
+               "title":  "鴉天狗的朱紅鳥居月夜",
+               "image":  "/assets/cards/card_57.jpg?v=fix7",
+               "style":  "浮世繪和風哥德 × 雙色極簡怪談風",
+               "source":  "AI Horde Anime Model"
+           },
+    "58":  {
+               "title":  "金繼古鏡與雙面怨靈姬",
+               "image":  "/assets/cards/card_58.jpg?v=fix7",
+               "style":  "浮世繪和風哥德 × 雙色極簡怪談風",
+               "source":  "AI Horde (Dreamshaper)"
+           },
+    "59":  {
+               "title":  "提燈引路的冥界擺渡人",
+               "image":  "/assets/cards/card_59.jpg?v=fix7",
+               "style":  "浮世繪和風哥德 × 雙色極簡怪談風",
+               "source":  "AI Horde Anime Model"
+           },
+    "60":  {
+               "title":  "紫藤花下的琵琶法師",
+               "image":  "/assets/cards/card_60.jpg?v=fix7",
+               "style":  "浮世繪和風哥德 × 雙色極簡怪談風",
+               "source":  "AI Horde (Flat-2D Animerge)"
+           },
+    "61":  {
+               "title":  "折扇結界的陰陽少主",
+               "image":  "/assets/cards/card_61.jpg?v=fix7",
+               "style":  "浮世繪和風哥德 × 雙色極簡怪談風",
+               "source":  "AI Horde Anime Model"
+           },
+    "62":  {
+               "title":  "和傘迴旋的蝶妖少女",
+               "image":  "/assets/cards/card_62.jpg?v=fix7",
+               "style":  "浮世繪和風哥德 × 雙色極簡怪談風",
+               "source":  "AI Horde Anime Model"
+           },
+    "63":  {
+               "title":  "鬼火竹林的妖刀斬擊",
+               "image":  "/assets/cards/card_63.jpg?v=fix7",
+               "style":  "浮世繪和風哥德 × 雙色極簡怪談風",
+               "source":  "AI Horde Anime Model"
+           },
+    "64":  {
+               "title":  "紅線傀儡的淨琉璃人形",
+               "image":  "/assets/cards/card_64.jpg?v=fix7",
+               "style":  "浮世繪和風哥德 × 雙色極簡怪談風",
+               "source":  "AI Horde Anime Model"
+           },
+    "65":  {
+               "title":  "金魚屏風前的夢魔花魁",
+               "image":  "/assets/cards/card_65.jpg?v=fix7",
+               "style":  "浮世繪和風哥德 × 雙色極簡怪談風",
+               "source":  "AI Horde (Flat-2D Animerge)"
+           },
+    "66":  {
+               "title":  "骷髏茶會的彼岸宵宴",
+               "image":  "/assets/cards/card_66.jpg?v=fix7",
+               "style":  "浮世繪和風哥德 × 雙色極簡怪談風",
+               "source":  "AI Horde Anime Model"
+           },
+    "67":  {
+               "title":  "九尾覺醒・金箔障子破滅",
+               "image":  "/assets/cards/card_67.jpg?v=fix7",
+               "style":  "浮世繪和風哥德 × 雙色極簡怪談風",
+               "source":  "AI Horde Anime Model"
+           },
+    "68":  {
+               "title":  "紙鶴咒縛的古鐘樓怪談",
+               "image":  "/assets/cards/card_68.jpg?v=fix7",
+               "style":  "浮世繪和風哥德 × 雙色極簡怪談風",
+               "source":  "AI Horde Anime Model"
+           },
+    "69":  {
+               "title":  "月蝕鬼面的神樂舞姬",
+               "image":  "/assets/cards/card_69.jpg?v=fix7",
+               "style":  "浮世繪和風哥德 × 雙色極簡怪談風",
+               "source":  "AI Horde Anime Model"
+           },
+    "70":  {
+               "title":  "百物語最終夜・吹熄青燭",
+               "image":  "/assets/cards/card_70.jpg?v=fix7",
+               "style":  "浮世繪和風哥德 × 雙色極簡怪談風",
+               "source":  "AI Horde Anime Model"
+           }
+}

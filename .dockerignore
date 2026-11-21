@@ -1,0 +1,13 @@
+node_modules
+.git
+.gitignore
+*.log
+*.ps1
+generate-*.js
+regenerate-*.js
+fetch-real-anime-assets.js
+test-engine.js
+DEPLOY_CLOUD_RUN.md
+Dockerfile
+.dockerignore
+public/assets/cards/*.png

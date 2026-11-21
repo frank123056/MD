@@ -1,0 +1,320 @@
+<!DOCTYPE html>
+<html lang="zh-Hant">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>動漫同人原畫拍賣會 — ACG Art Auction (現代藝術線上版)</title>
+  <link rel="stylesheet" href="/styles.css" />
+</head>
+<body>
+  <header class="topbar">
+    <div class="brand">
+      <span class="brand-badge" aria-hidden="true">🎨</span>
+      <div>
+        <h1>動漫同人原畫拍賣會 <span class="brand-sub">ACG Art Auction · 現代藝術規則</span></h1>
+      </div>
+    </div>
+
+    <div class="topbar-status" id="topbar-status">
+      <div class="pill hidden" id="room-pill">
+        <span>房號：</span>
+        <strong id="header-room-code">-----</strong>
+        <button type="button" class="btn-mini" id="btn-copy-room" title="複製邀請連結">複製</button>
+      </div>
+      <div class="pill hidden" id="season-pill">
+        <span id="header-season">第 1 / 4 季</span>
+      </div>
+      <div class="pill hidden" id="deck-pill">
+        <span>牌庫：</span><strong id="header-deck">0</strong>
+      </div>
+    </div>
+
+    <div class="topbar-actions">
+      <button type="button" class="btn btn-secondary btn-sm hidden" id="btn-toggle-logs" commandfor="log-popover" command="toggle-popover">
+        📜 紀錄 <span class="badge gold" id="log-count-badge">0</span>
+      </button>
+      <button type="button" class="btn btn-ghost btn-sm" id="btn-toggle-sound" aria-pressed="true">🔊 音效開</button>
+      <button type="button" class="btn btn-ghost btn-sm hidden" id="btn-open-settlement">📊 結算</button>
+      <button type="button" class="btn btn-secondary btn-sm" id="btn-open-rules">📖 規則</button>
+      <button type="button" class="btn btn-danger btn-sm hidden" id="btn-leave-room">離開</button>
+    </div>
+  </header>
+
+  <main class="app-shell">
+    <!-- Toast / Error banner -->
+    <div id="toast-container" class="toast-container" aria-live="polite"></div>
+
+    <!-- VIEW 1: LOBBY -->
+    <section id="lobby-view" class="lobby-view">
+      <div class="lobby-hero card-panel">
+        <div class="hero-tag">Reiner Knizia《現代藝術》規則 × ACG 同人原畫競標</div>
+        <h2>線上秋葉原同人原畫拍賣會</h2>
+        <p class="muted">
+          支援 <strong>3～5 人</strong> 即時連線搶標，亦可加入御宅 AI 對手湊桌。伺服器嚴格隱藏每位收藏家痛包後的資金與手牌，真實還原會場心理博弈！
+        </p>
+
+        <div class="form-row">
+          <label class="field">
+            <span>你的收藏家暱稱</span>
+            <input type="text" id="input-player-name" maxlength="16" placeholder="輸入御宅暱稱（例：秋葉原騎士）" />
+          </label>
+        </div>
+
+        <div class="lobby-actions-grid">
+          <div class="sub-panel">
+            <h3>建立新拍賣廳</h3>
+            <p class="muted-sm">成為房主，邀請好友或新增 AI 對手。</p>
+            <button type="button" class="btn btn-primary btn-full" id="btn-create-room">✨ 建立房間</button>
+          </div>
+
+          <div class="sub-panel">
+            <h3>加入現有房間</h3>
+            <div class="join-inline">
+              <input type="text" id="input-room-code" maxlength="6" placeholder="輸入 5 碼房號" />
+              <button type="button" class="btn btn-accent" id="btn-join-room">進入</button>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="lobby-rooms card-panel">
+        <div class="panel-header">
+          <h3>目前公開房間列表</h3>
+          <button type="button" class="btn btn-ghost btn-sm" id="btn-refresh-rooms">🔄 重新整理</button>
+        </div>
+        <div id="public-rooms-list" class="rooms-list">
+          <p class="muted">目前尚無房間，建立一個新拍賣廳吧！</p>
+        </div>
+      </div>
+    </section>
+
+    <!-- VIEW 2: WAITING ROOM -->
+    <section id="waiting-view" class="waiting-view hidden">
+      <div class="card-panel waiting-panel">
+        <div class="panel-header">
+          <div>
+            <h2>拍賣廳準備室 <span class="code-chip" id="waiting-room-code">-----</span></h2>
+            <p class="muted-sm">需滿 <strong>3 至 5 位玩家</strong> 即可開局。你可以將連結傳給朋友，或直接開新分頁測試多人連線。</p>
+          </div>
+          <div class="waiting-invite-btns">
+            <button type="button" class="btn btn-secondary btn-sm" id="btn-copy-invite">🔗 複製邀請連結</button>
+            <button type="button" class="btn btn-ghost btn-sm" id="btn-open-new-tab">🗗 開新分頁模擬第2人</button>
+          </div>
+        </div>
+
+        <div id="waiting-seats" class="seats-grid"></div>
+
+        <div class="waiting-controls">
+          <div id="host-controls" class="host-controls hidden">
+            <button type="button" class="btn btn-secondary" id="btn-add-bot">🤖 + 新增電腦 AI</button>
+            <button type="button" class="btn btn-ghost" id="btn-remove-bot">移除 AI</button>
+            <button type="button" class="btn btn-primary btn-lg" id="btn-start-game">🔨 開始拍賣會</button>
+          </div>
+          <p id="guest-wait-msg" class="muted hidden">等待房主開始遊戲中...</p>
+        </div>
+      </div>
+
+      <div class="card-panel waiting-chat-panel">
+        <h3>大廳聊天室</h3>
+        <div id="waiting-chat-log" class="chat-feed"></div>
+        <form class="chat-form" id="waiting-chat-form">
+          <input type="text" id="waiting-chat-input" maxlength="200" placeholder="傳送訊息給房間成員..." />
+          <button type="submit" class="btn btn-accent btn-sm">送出</button>
+        </form>
+      </div>
+    </section>
+
+    <!-- VIEW 3: ACTIVE GAME TABLE -->
+    <section id="game-view" class="game-view hidden">
+      <!-- 1. Artist Valuation & Season Board (Responsive Table) -->
+      <section class="card-panel board-panel">
+        <div class="panel-header compact">
+          <h3>繪師行情與本屆同人展進度</h3>
+          <span class="hint-chip">第 5 張原畫 → 本屆完售立即結算</span>
+        </div>
+
+        <div tabindex="0" role="region" aria-labelledby="artist-table-caption" class="table-wrapper">
+          <table class="artist-table">
+            <caption id="artist-table-caption" class="sr-only">
+              5 位動漫繪師在 4 屆同人展的市場行情與本屆出場原畫張數（張數平手時以順位靠前者優先）
+            </caption>
+            <thead>
+              <tr>
+                <th scope="col">繪師 (順位)</th>
+                <th scope="col">總數</th>
+                <th scope="col">S1</th>
+                <th scope="col">S2</th>
+                <th scope="col">S3</th>
+                <th scope="col">S4</th>
+                <th scope="col">累積</th>
+                <th scope="col">本屆進度</th>
+              </tr>
+            </thead>
+            <tbody id="artist-board-body"></tbody>
+          </table>
+        </div>
+      </section>
+
+      <!-- 2. Unified Players Gallery List -->
+      <section class="card-panel players-panel">
+        <div class="panel-header compact">
+          <h3>收藏家席位與購入原畫</h3>
+        </div>
+        <div id="players-list" class="players-list" aria-label="所有收藏家狀態與已購入原畫">
+          <!-- Rendered dynamically -->
+        </div>
+      </section>
+
+      <!-- 3. Expanded Auction Stage -->
+      <section class="card-panel stage-panel" id="auction-stage">
+        <!-- Rendered dynamically by app.js -->
+      </section>
+
+      <!-- 4. My Hand & Private Screen Dock -->
+      <section class="card-panel hand-panel">
+        <div class="panel-header compact">
+          <div class="my-screen-summary">
+            <h3>我的收藏痛包</h3>
+            <div class="cash-badge">
+              <span>🔒 秘密資金：</span>
+              <strong id="my-money-value">$100</strong>
+            </div>
+            <div class="projected-badge">
+              <span>預估轉賣：</span>
+              <strong id="my-projected-value">$0</strong>
+            </div>
+          </div>
+          <div class="hand-filters" id="hand-filters">
+            <button type="button" class="filter-chip active" data-artist="all">全部手牌</button>
+          </div>
+        </div>
+
+        <div id="hand-confirm-bar" class="hand-confirm-bar hidden"></div>
+        <div id="my-hand-cards" class="hand-cards-row"></div>
+      </section>
+
+      <!-- 5. Bottom-Right Chat Panel -->
+      <aside class="card-panel chat-panel" id="game-chat-panel">
+        <div class="panel-header compact">
+          <h3>會場聊天室</h3>
+        </div>
+        <div class="quick-emotes">
+          <button type="button" class="emote-btn" data-emote="🔨 尊死落槌！">🔨 尊死落槌！</button>
+          <button type="button" class="emote-btn" data-emote="💸 石油王出沒">💸 石油王出沒</button>
+          <button type="button" class="emote-btn" data-emote="🤝 求合攤雙簽">🤝 求合攤雙簽</button>
+          <button type="button" class="emote-btn" data-emote="🔥 小心第5張爆死">🔥 第5張爆死</button>
+        </div>
+        <div id="game-chat-log" class="chat-feed"></div>
+        <form class="chat-form" id="game-chat-form">
+          <input type="text" id="game-chat-input" maxlength="200" placeholder="喊話或心理戰..." />
+          <button type="submit" class="btn btn-accent btn-sm">送出</button>
+        </form>
+      </aside>
+    </section>
+
+    <!-- Floating Auction Log Popover -->
+    <dialog id="log-popover" class="log-popover" popover="auto" aria-labelledby="log-popover-title">
+      <div class="popover-header">
+        <h3 id="log-popover-title">📜 拍賣紀錄</h3>
+        <button type="button" class="btn btn-ghost btn-sm" id="btn-close-logs" commandfor="log-popover" command="hide-popover">✕ 關閉</button>
+      </div>
+      <div id="game-logs" class="log-feed"></div>
+    </dialog>
+  </main>
+
+  <!-- Native Modal Dialog: Game Rules -->
+  <dialog id="rules-dialog" class="modal-dialog" closedby="any" aria-labelledby="rules-dialog-title">
+    <div class="dialog-header">
+      <h2 id="rules-dialog-title">《現代藝術 Modern Art》完整規則速查</h2>
+      <form method="dialog">
+        <button type="submit" class="btn btn-ghost btn-sm" value="close">✕ 關閉</button>
+      </form>
+    </div>
+    <div class="dialog-body rules-content">
+      <div class="rule-block">
+        <h4>1. 遊戲目標與基本設置</h4>
+        <ul>
+          <li>共 <strong>70 張畫作</strong>（5 位畫家分別為 12、13、14、15、16 張），進行 <strong>4 個季節（回合）</strong>。</li>
+          <li>每位玩家起始擁有 <strong>$100</strong> 資金（屏風後隱藏），最後現金最多者獲勝。</li>
+          <li><strong>發牌數（3/4/5人）</strong>：第1季 10/9/8 張；第2季 6/4/3 張；第3季 6/4/3 張；第4季不補牌。未打完的手牌保留至下一季。</li>
+        </ul>
+      </div>
+      <div class="rule-block">
+        <h4>2. 五種拍賣方式</h4>
+        <ul>
+          <li><strong>📢 公開競標</strong>：自由加碼出價，無人再加價（或全員 Pass）時最高價得標；沒人出價則拍賣官免費獲得。</li>
+          <li><strong>🔄 一輪競標</strong>：從左手邊起順時針每人只有 1 次出價或 Pass 機會，最後輪回拍賣官決定買下或讓別人得標。</li>
+          <li><strong>✊ 暗標</strong>：所有人同時秘密出價（0～現有現金），同時揭曉。平手時，離拍賣官（含本人）順時針較近者勝出。</li>
+          <li><strong>🏷️ 定價拍賣</strong>：拍賣官自訂售價，順時針問誰要買；第一個喊買者成交。<strong>若全場沒人買，拍賣官必須自己付錢給銀行買下！</strong></li>
+          <li><strong>🖼️ 聯合拍賣</strong>：可再打出一張同畫家非聯合牌綁定拍賣（依第二張牌決定拍賣法）。若別人幫忙出第二張牌，該玩家成為新拍賣官，售價平分（奇數多 $1 歸新拍賣官）。若全場不補牌，原拍賣官免費獲得。</li>
+        </ul>
+      </div>
+      <div class="rule-block">
+        <h4>3. 季節結束與累積計分（最關鍵規則）</h4>
+        <ul>
+          <li>當場上出現任一畫家的<strong>第 5 張畫</strong>時，該季立刻結束，且<strong>第 5 張畫不拍賣</strong>（僅計算數量）。</li>
+          <li>本季張數前 3 名畫家分別獲得：<strong>第1名 +$30、第2名 +$20、第3名 +$10</strong>。張數平手時，圖板順位越靠前（總張數越少）的畫家名次越高。</li>
+          <li><strong>累積計分</strong>：只有本季擠進前 3 名的畫家，畫作才能賣錢，單張價格 = <strong>本季價值 + 過去所有季節累積價值</strong>；若本季未進前 3 名，該畫家畫作本季價值為 <strong>$0</strong>！</li>
+        </ul>
+      </div>
+    </div>
+    <div class="dialog-footer">
+      <form method="dialog">
+        <button type="submit" class="btn btn-primary" value="ok" autofocus>我知道了</button>
+      </form>
+    </div>
+  </dialog>
+
+  <!-- Native Modal Dialog: Season Settlement / Game Over -->
+  <dialog id="settlement-dialog" class="modal-dialog" closedby="any" aria-labelledby="settlement-dialog-title">
+    <div class="dialog-header">
+      <h2 id="settlement-dialog-title">季度拍賣結算報告</h2>
+      <form method="dialog">
+        <button type="submit" class="btn btn-ghost btn-sm" value="close">✕ 關閉</button>
+      </form>
+    </div>
+    <div class="dialog-body" id="settlement-dialog-body"></div>
+    <div class="dialog-footer" id="settlement-dialog-footer"></div>
+  </dialog>
+
+  <!-- Native Modal Dialog: Collector Purchased Paintings -->
+  <dialog id="collector-dialog" class="modal-dialog" closedby="any" aria-labelledby="collector-dialog-title">
+    <div class="dialog-header">
+      <h2 id="collector-dialog-title">收藏家本季購入原畫</h2>
+      <form method="dialog">
+        <button type="submit" class="btn btn-ghost btn-sm" value="close">✕ 關閉</button>
+      </form>
+    </div>
+    <div class="dialog-body" id="collector-dialog-body"></div>
+    <div class="dialog-footer">
+      <form method="dialog">
+        <button type="submit" class="btn btn-primary" value="ok" autofocus>關閉</button>
+      </form>
+    </div>
+  </dialog>
+
+  <!-- Native Modal Dialog: Idle Disconnect Notice -->
+  <dialog id="idle-dialog" class="modal-dialog" aria-labelledby="idle-dialog-title">
+    <div class="dialog-header">
+      <h2 id="idle-dialog-title">💤 已因閒置自動斷線</h2>
+    </div>
+    <div class="dialog-body">
+      <p id="idle-dialog-message">你已閒置過久，為節省雲端連線資源系統已自動暫停連線。點擊下方按鈕即可立即重新連線。</p>
+    </div>
+    <div class="dialog-footer">
+      <button type="button" class="btn btn-primary" id="btn-idle-reconnect" autofocus>🔄 重新連線</button>
+    </div>
+  </dialog>
+
+  <script type="module">
+    if (!Object.hasOwn(HTMLElement.prototype, 'popover')) {
+      import('https://unpkg.com/@oddbird/popover-polyfill@latest/dist/popover.min.js');
+    }
+    if (!('commandForElement' in HTMLButtonElement.prototype)) {
+      import('https://esm.run/invokers-polyfill');
+    }
+  </script>
+  <script src="/socket.io/socket.io.js"></script>
+  <script src="/app.js"></script>
+</body>
+</html>

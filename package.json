@@ -1,0 +1,16 @@
+{
+  "name": "modern-art-online",
+  "version": "1.0.0",
+  "description": "Online multiplayer board game Modern Art (現代藝術)",
+  "main": "server.js",
+  "scripts": {
+    "start": "node server.js",
+    "test": "node test-engine.js"
+  },
+  "dependencies": {
+    "@dicebear/collection": "^9.4.2",
+    "@dicebear/core": "^9.4.2",
+    "express": "^4.21.2",
+    "socket.io": "^4.8.1"
+  }
+}
