@@ -182,6 +182,8 @@ function advanceAfterTurn(game, lastAuctioneerIndex) {
   game.phase = 'PLAY_CARD';
 }
 
+const OPEN_AUCTION_DURATION_MS = 90000;
+
 function startAuction(game, cards, auctionType, auctioneerIndex, coAuctioneerIndex) {
   const isOpen = auctionType === 'open';
   const isFixed = auctionType === 'fixed_price';
@@ -208,7 +210,8 @@ function startAuction(game, cards, auctionType, auctioneerIndex, coAuctioneerInd
     onceAroundBids: {},
     hiddenBids: {},
     fixedPrice: null,
-    openExpiresAt: isOpen ? Date.now() + 15000 : null,
+    openExpiresAt: isOpen ? Date.now() + OPEN_AUCTION_DURATION_MS : null,
+    openDurationMs: isOpen ? OPEN_AUCTION_DURATION_MS : null,
     startedAt: Date.now(),
   };
 
@@ -493,7 +496,7 @@ function placeBid(game, playerIndex, { amount = null, pass = false } = {}) {
     auction.currentBid = bid;
     auction.highestBidderIndex = playerIndex;
     auction.passedPlayers = [playerIndex];
-    auction.openExpiresAt = Date.now() + 12000;
+    auction.openExpiresAt = Date.now() + OPEN_AUCTION_DURATION_MS;
     addLog(game, `${player.name} 喊價 $${bid}`, 'bid');
     return;
   }
@@ -835,6 +838,7 @@ function getSanitizedState(game, viewerPlayerId) {
           : null,
       fixedPrice: a.fixedPrice,
       openExpiresAt: a.openExpiresAt,
+      openDurationMs: a.openDurationMs || null,
     };
   }
 

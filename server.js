@@ -6,7 +6,7 @@ const engine = require('./gameEngine');
 const botEngine = require('./botEngine');
 
 const PORT = Number(process.env.PORT) || 3040;
-const IDLE_TIMEOUT_MS = Number(process.env.IDLE_TIMEOUT_MS) || 30 * 60 * 1000;
+const IDLE_TIMEOUT_MS = Number(process.env.IDLE_TIMEOUT_MS) || 15 * 60 * 1000;
 const ROOM_STALE_MS = Number(process.env.ROOM_STALE_MS) || 60 * 60 * 1000;
 const IDLE_CHECK_INTERVAL_MS = Math.min(30000, Math.max(1000, Math.floor(IDLE_TIMEOUT_MS / 3)));
 const BOT_NAMES = ['秋葉原大王 Bot', '同人壁攤大手 Bot', '課金石油王 Bot', '傳說痛車主 Bot', '全婆俠收藏家 Bot'];

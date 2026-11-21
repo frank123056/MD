@@ -690,12 +690,17 @@
         const iAmHighest = a.highestBidderIndex === myIdx;
         const iPassed = !iAmHighest && a.passedPlayers.includes(myIdx);
         const canBid = !iAmHighest && me.money > a.currentBid;
+        const openDurationMs = a.openDurationMs || 90000;
+        const openRemainingMs = Math.max(0, (a.openExpiresAt || 0) - Date.now());
+        const openRemainSec = Math.ceil(openRemainingMs / 1000);
+        const openPct = Math.min(100, (openRemainingMs / openDurationMs) * 100);
         statusBanner = `
           <div class="bid-banner">
             <span class="bid-amount">$${a.currentBid}</span>
             <span>${highestPlayer ? `目前最高出價：<strong>${escapeHtml(highestPlayer.name)}</strong>` : '尚無人出價'}</span>
+            <span class="badge" id="open-auction-seconds">⏳ ${openRemainSec}s</span>
           </div>
-          <div class="countdown-track" aria-label="公開競標倒數"><div class="countdown-fill" id="open-countdown-fill" style="width:100%"></div></div>
+          <div class="countdown-track" aria-label="公開競標倒數"><div class="countdown-fill" id="open-countdown-fill" style="width:${openPct.toFixed(1)}%"></div></div>
         `;
         controlsHtml = `
           <div class="controls-bar">
@@ -1264,7 +1269,7 @@
   socket.on('idle_disconnect', (data = {}) => {
     pendingReconnectRoomCode = roomState?.code || null;
     if (idleDialogMessage) {
-      const minutes = data.idleMinutes || 30;
+      const minutes = data.idleMinutes || 15;
       idleDialogMessage.textContent = `超過 ${minutes} 分鐘未有操作，為節省雲端連線資源已自動暫停連線。點擊下方按鈕即可重新連線${pendingReconnectRoomCode ? `並嘗試回到房間 ${pendingReconnectRoomCode}` : ''}。`;
     }
     if (idleDialog && !idleDialog.open) {
@@ -1402,11 +1407,15 @@
 
     const a = g.activeAuction;
     if (a && a.auctionType === 'open' && a.openExpiresAt) {
+      const remaining = Math.max(0, a.openExpiresAt - now);
       const bar = document.getElementById('open-countdown-fill');
       if (bar) {
-        const remaining = Math.max(0, a.openExpiresAt - now);
-        const pct = Math.min(100, (remaining / 15000) * 100);
+        const pct = Math.min(100, (remaining / (a.openDurationMs || 90000)) * 100);
         bar.style.width = `${pct.toFixed(1)}%`;
+      }
+      const secEl = document.getElementById('open-auction-seconds');
+      if (secEl) {
+        secEl.textContent = `⏳ ${Math.ceil(remaining / 1000)}s`;
       }
     }
 

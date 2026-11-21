@@ -59,7 +59,12 @@ console.log('3. Testing open auction & self-buy payment to bank...');
 
   engine.playCard(g, 0, 'c1');
   assert.strictEqual(g.phase, 'AUCTION');
+  assert.strictEqual(g.activeAuction.openDurationMs, 90000);
+  assert.strictEqual(engine.getSanitizedState(g, g.players[0].id).activeAuction.openDurationMs, 90000);
+  assert.strictEqual(engine.checkOpenAuctionTimeout(g, g.activeAuction.openExpiresAt - 1), false);
+  const beforeBidExpiry = g.activeAuction.openExpiresAt;
   engine.placeBid(g, 1, { amount: 20 });
+  assert.ok(g.activeAuction.openExpiresAt >= beforeBidExpiry && g.activeAuction.openExpiresAt - Date.now() > 80000);
   engine.placeBid(g, 0, { amount: 25 }); // Auctioneer bids 25
   engine.placeBid(g, 1, { pass: true });
   engine.placeBid(g, 2, { pass: true });
@@ -68,6 +73,14 @@ console.log('3. Testing open auction & self-buy payment to bank...');
   assert.strictEqual(g.players[1].money, 100);
   assert.strictEqual(g.players[0].purchased.length, 1);
   assert.strictEqual(g.turnPlayerIndex, 1);
+
+  // Also test open auction 90s timeout settlement
+  const cOpenTimeout = makeCard('c1_t', 0, 'open');
+  g.players[1].hand.push(cOpenTimeout);
+  engine.playCard(g, 1, 'c1_t');
+  assert.strictEqual(engine.checkOpenAuctionTimeout(g, g.activeAuction.openExpiresAt - 1), false);
+  assert.strictEqual(engine.checkOpenAuctionTimeout(g, g.activeAuction.openExpiresAt), true);
+  assert.strictEqual(g.phase, 'PLAY_CARD');
 }
 
 console.log('4. Testing once-around auction...');
