@@ -20,7 +20,8 @@ app.use(express.json());
 app.use(
   '/assets',
   express.static(path.join(__dirname, 'public', 'assets'), {
-    maxAge: '7d',
+    maxAge: '365d',
+    immutable: true,
   })
 );
 app.use(express.static(path.join(__dirname, 'public')));

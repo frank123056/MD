@@ -8,6 +8,43 @@
     sessionStorage.setItem('modernArtSessionId', sessionId);
   }
 
+  const CDN_ASSETS_BASE = 'https://cdn.jsdelivr.net/gh/frank123056/MD@main/public/assets';
+
+  // Automatic local fallback if jsDelivr CDN is unreachable (e.g. offline local testing)
+  document.addEventListener(
+    'error',
+    (e) => {
+      const el = e.target;
+      if (el && el.tagName === 'IMG' && el.dataset.fallback) {
+        const fallback = el.dataset.fallback;
+        delete el.dataset.fallback;
+        const fallbackHref = new URL(fallback, window.location.origin).href;
+        if (el.src !== fallbackHref) {
+          el.src = fallback;
+        }
+      }
+    },
+    true
+  );
+
+  function getAvatarUrls(name) {
+    const seed = String(name || 'guest').slice(0, 64);
+    let hash = 0;
+    for (let i = 0; i < seed.length; i++) {
+      hash = (hash * 31 + seed.charCodeAt(i)) >>> 0;
+    }
+    const idx = hash % 10;
+    return {
+      cdn: `${CDN_ASSETS_BASE}/avatars/avatar_${idx}.png`,
+      local: `/assets/avatars/avatar_${idx}.png`,
+    };
+  }
+
+  function renderAvatarImgHtml(name) {
+    const av = getAvatarUrls(name);
+    return `<img class="player-avatar" src="${escapeHtml(av.cdn)}" data-fallback="${escapeHtml(av.local)}" alt="" loading="lazy" />`;
+  }
+
   const AUCTION_META = {
     open: { icon: '📢', label: '公開競標', rule: '所有玩家自由喊價加碼，無人加價（全員 Pass 或倒數結束）由最高價得標；無人出價則拍賣官免費獲得。' },
     once_around: { icon: '🔄', label: '一輪競標', rule: '由拍賣官下一位起依序每人只有一次出價或 Pass 機會，拍賣官本人排在最後一位壓軸決定加價買下或讓最高價者得標。' },
@@ -212,12 +249,14 @@
       : '';
     const num = card.cardNumber || (String(card.id || '').replace(/\D+/g, '') || 1);
     const rawImg = card.image || `/assets/cards/card_${num}.jpg`;
-    const imgSrc = rawImg.includes('?') ? rawImg : `${rawImg}?v=fix7`;
+    const localSrc = rawImg.includes('?') ? rawImg : `${rawImg}?v=fix7`;
+    const cleanRel = rawImg.split('?')[0].replace(/^\/assets\//, '');
+    const cdnSrc = `${CDN_ASSETS_BASE}/${cleanRel}`;
     const serialLabel = `#${String(num).padStart(2, '0')}`;
 
     return `<${tag} class="${cls.join(' ')}" style="--card-color:${card.color}" ${extraAttrs}>
       <div class="card-art-wrap">
-        <img class="card-art-character" src="${escapeHtml(imgSrc)}" alt="${escapeHtml(card.artistName)}" loading="lazy" />
+        <img class="card-art-character" src="${escapeHtml(cdnSrc)}" data-fallback="${escapeHtml(localSrc)}" alt="${escapeHtml(card.artistName)}" loading="lazy" />
         <span class="card-serial-tag">${serialLabel}</span>
       </div>
       <div class="card-meta">
@@ -287,7 +326,7 @@
         const isHost = seat.id === room.hostSessionId;
         seatCards.push(`<div class="seat-card ${isMe ? 'is-me' : ''}">
           <div class="seat-card-head">
-            <img class="player-avatar" src="/api/avatar/${encodeURIComponent(seat.name)}" alt="" />
+            ${renderAvatarImgHtml(seat.name)}
             <strong>${escapeHtml(seat.name)}</strong>
           </div>
           <div class="seat-badges">
@@ -479,7 +518,7 @@
 
         return `<button type="button" class="player-row ${isTurn ? 'active-turn' : ''} ${isMe ? 'is-me' : ''}" data-player-index="${idx}" title="點擊查看 ${escapeHtml(p.name)} 本季購入的原畫">
           <div class="player-row-identity">
-            <img class="player-avatar" src="/api/avatar/${encodeURIComponent(p.name)}" alt="" />
+            ${renderAvatarImgHtml(p.name)}
             <strong>${escapeHtml(p.name)}</strong>
             ${isMe ? '<span class="badge pink">你</span>' : ''}
             ${p.isAI ? '<span class="badge blue">AI</span>' : ''}
