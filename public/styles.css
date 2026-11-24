@@ -1468,6 +1468,70 @@ dialog::backdrop {
   text-align: left;
 }
 
+.settlement-artist-row {
+  box-shadow: inset 4px 0 0 var(--artist-color, var(--gold));
+}
+
+.settlement-artist-row.is-champion {
+  background: color-mix(in srgb, var(--artist-color, var(--gold)) 22%, transparent);
+}
+
+.settlement-artist-row.is-top3 {
+  background: color-mix(in srgb, var(--artist-color, var(--gold)) 12%, transparent);
+}
+
+.settlement-artist-row.is-unranked {
+  background: color-mix(in srgb, var(--artist-color, var(--gold)) 5%, transparent);
+  opacity: 0.72;
+}
+
+.settlement-artist-cell {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.45rem;
+}
+
+.settlement-color-dot {
+  width: 10px;
+  height: 10px;
+  border-radius: 50%;
+  background: var(--artist-color, var(--gold));
+  box-shadow: 0 0 8px color-mix(in srgb, var(--artist-color, var(--gold)) 65%, transparent);
+  flex-shrink: 0;
+}
+
+.settlement-artist-name,
+.settlement-artist-row.is-champion .settlement-payout,
+.settlement-artist-row.is-top3 .settlement-payout {
+  color: color-mix(in srgb, var(--artist-color, var(--gold)) 78%, #ffffff);
+}
+
+.settlement-rank-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.25rem;
+  padding: 0.14rem 0.45rem;
+  border-radius: 999px;
+  font-size: 0.78rem;
+  font-weight: 700;
+  white-space: nowrap;
+  background: rgba(255, 255, 255, 0.06);
+  border: 1px solid rgba(255, 255, 255, 0.12);
+}
+
+.settlement-rank-badge.is-first {
+  background: color-mix(in srgb, var(--artist-color, var(--gold)) 26%, transparent);
+  border-color: color-mix(in srgb, var(--artist-color, var(--gold)) 75%, transparent);
+  color: color-mix(in srgb, var(--artist-color, var(--gold)) 85%, #ffffff);
+}
+
+.settlement-sold-cell {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 0.32rem;
+}
+
 /* Hidden Bid Reveal & Once-Around Order Grids */
 .hidden-reveal-list,
 .once-order-list {

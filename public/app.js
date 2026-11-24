@@ -1206,25 +1206,53 @@
 
     const artistRows = report.ranking
       .map((r) => {
+        const artist = game.artists[r.artistIndex];
+        const color = artist?.color || '#eab308';
+        const rowCls = r.rank === 1 ? 'is-champion' : r.rank ? 'is-top3' : 'is-unranked';
+        const rankHtml =
+          r.rank === 1
+            ? '<span class="settlement-rank-badge is-first">👑 第 1 名</span>'
+            : r.rank === 2
+            ? '<span class="settlement-rank-badge">🥈 第 2 名</span>'
+            : r.rank === 3
+            ? '<span class="settlement-rank-badge">🥉 第 3 名</span>'
+            : '<span class="muted-sm">未入榜</span>';
         const payout = report.payoutsPerArtist[r.artistIndex];
-        return `<tr>
-          <td>${r.rank ? `第 ${r.rank} 名` : '未入榜'}</td>
-          <td>${escapeHtml(r.name)}</td>
+        return `<tr class="settlement-artist-row ${rowCls}" style="--artist-color:${escapeHtml(color)}">
+          <td>${rankHtml}</td>
+          <td>
+            <span class="settlement-artist-cell">
+              <span class="settlement-color-dot" aria-hidden="true"></span>
+              <strong class="settlement-artist-name">${escapeHtml(r.name)}</strong>
+            </span>
+          </td>
           <td>${r.count} 張</td>
           <td>${r.bonus ? `+$${r.bonus}` : '$0'}</td>
-          <td><strong>$${payout} / 張</strong></td>
+          <td><strong class="settlement-payout">${payout > 0 ? `$${payout} / 張` : '$0 / 張'}</strong></td>
         </tr>`;
       })
       .join('');
 
     const playerRows = report.playerPayouts
-      .map(
-        (pp) => `<tr>
+      .map((pp) => {
+        const chipsHtml = game.artists
+          .filter((a) => (pp.countsByArtist?.[a.index] || 0) > 0)
+          .map(
+            (a) =>
+              `<span class="color-count-chip" style="--chip-color:${escapeHtml(a.color)}" title="${escapeHtml(a.zhName)} ${pp.countsByArtist[a.index]} 張"><span class="color-swatch"></span>×${pp.countsByArtist[a.index]}</span>`
+          )
+          .join('');
+        return `<tr>
           <td>${escapeHtml(pp.playerName)}</td>
-          <td>${pp.soldCount} 張</td>
+          <td>
+            <div class="settlement-sold-cell">
+              <span>${pp.soldCount} 張</span>
+              ${chipsHtml}
+            </div>
+          </td>
           <td><strong>+$${pp.earned}</strong></td>
-        </tr>`
-      )
+        </tr>`;
+      })
       .join('');
 
     let rankingsHtml = '';
