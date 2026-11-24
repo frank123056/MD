@@ -1402,6 +1402,40 @@ dialog::backdrop {
   overflow-y: auto;
 }
 
+.collector-profile-banner {
+  display: flex;
+  align-items: center;
+  gap: 0.85rem;
+  padding: 0.65rem 0.8rem;
+  border-radius: 12px;
+  background: rgba(15, 20, 32, 0.72);
+  border: 1px solid var(--border);
+  margin-bottom: 0.85rem;
+}
+
+.collector-profile-avatar {
+  width: 68px;
+  height: 68px;
+  border-radius: 14px;
+  border: 2px solid var(--border-gold);
+  object-fit: cover;
+  flex-shrink: 0;
+  background: #0b0e17;
+}
+
+.collector-profile-meta {
+  min-width: 0;
+}
+
+.collector-profile-name-row {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 0.35rem;
+  margin-bottom: 0.25rem;
+  font-size: 1rem;
+}
+
 .rule-block {
   margin-bottom: 1rem;
 }

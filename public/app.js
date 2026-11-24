@@ -603,8 +603,27 @@
 
     collectorTitle.textContent = `${player.name} — 本季購入原畫（共 ${player.purchased.length} 張）`;
 
+    const av = getAvatarUrls(player.name, player.avatarIndex);
+    const roleLabel =
+      Number.isInteger(player.avatarIndex) && AVATAR_CATALOG[player.avatarIndex]
+        ? AVATAR_CATALOG[player.avatarIndex].label
+        : '';
+    const profileBannerHtml = `
+      <div class="collector-profile-banner">
+        <img class="collector-profile-avatar" src="${escapeHtml(av.cdn)}" data-fallback="${escapeHtml(av.local)}" alt="${escapeHtml(player.name)}" />
+        <div class="collector-profile-meta">
+          <div class="collector-profile-name-row">
+            <strong>${escapeHtml(player.name)}</strong>
+            ${playerIndex === room.mySeatIndex ? '<span class="badge pink">你</span>' : ''}
+            ${player.isAI ? '<span class="badge blue">AI</span>' : ''}
+            ${roleLabel ? `<span class="badge gold">${escapeHtml(roleLabel)}</span>` : ''}
+          </div>
+          <p class="muted-sm">本季購入原畫：共 <strong>${player.purchased.length}</strong> 張 · 剩餘手牌：<strong>${player.handCount}</strong> 張</p>
+        </div>
+      </div>`;
+
     if (player.purchased.length === 0) {
-      collectorBody.innerHTML = '<p class="muted">這位收藏家在本季尚未購入任何原畫。</p>';
+      collectorBody.innerHTML = `${profileBannerHtml}<p class="muted">這位收藏家在本季尚未購入任何原畫。</p>`;
     } else {
       const counts = [0, 0, 0, 0, 0];
       for (const c of player.purchased) counts[c.artistIndex] += 1;
@@ -617,6 +636,7 @@
         .join(' ');
 
       collectorBody.innerHTML = `
+        ${profileBannerHtml}
         <div style="display:flex;flex-wrap:wrap;gap:0.4rem;margin-bottom:0.85rem;">${summaryHtml}</div>
         <div class="collector-cards-grid">
           ${player.purchased.map((c) => renderCardHtml(c)).join('')}
