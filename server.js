@@ -93,7 +93,9 @@ function sanitizeAvatarIndex(val) {
 }
 
 function getSanitizedRoomPayload(room, viewerSessionId) {
-  const mySeatIndex = room.seats.findIndex((s) => s.id === viewerSessionId);
+  const mySeatIndex = room.game
+    ? room.game.players.findIndex((p) => p.id === viewerSessionId)
+    : room.seats.findIndex((s) => s.id === viewerSessionId);
   return {
     code: room.code,
     hostSessionId: room.hostSessionId,
@@ -386,6 +388,26 @@ io.on('connection', (socket) => {
     }
   });
 
+  function shuffleInPlace(array) {
+    for (let i = array.length - 1; i > 0; i--) {
+      const j = Math.floor(Math.random() * (i + 1));
+      [array[i], array[j]] = [array[j], array[i]];
+    }
+    return array;
+  }
+
+  function initRoomGame(room) {
+    shuffleInPlace(room.seats);
+    room.game = engine.createGame(room.seats, { aiDifficulty: room.aiDifficulty });
+    const orderText = room.seats.map((s, idx) => `${idx + 1}.${s.name}`).join(' → ');
+    room.chat.push({
+      id: Date.now() + Math.random(),
+      sender: '系統',
+      text: `🎲 本局已隨機決定順位：${orderText}（由 ${room.seats[0].name} 先手出牌）。`,
+      system: true,
+    });
+  }
+
   socket.on('start_game', async (_payload, ack) => {
     try {
       const room = rooms.get(socket.data.roomCode);
@@ -395,7 +417,7 @@ io.on('connection', (socket) => {
         throw new Error('需要 3 到 5 位玩家才能開始遊戲');
       }
 
-      room.game = engine.createGame(room.seats, { aiDifficulty: room.aiDifficulty });
+      initRoomGame(room);
       await broadcastRoomState(room);
       scheduleBotStep(room, 750);
       if (typeof ack === 'function') ack({ ok: true });
@@ -413,7 +435,7 @@ io.on('connection', (socket) => {
         clearTimeout(room.botTimer);
         room.botTimer = null;
       }
-      room.game = engine.createGame(room.seats, { aiDifficulty: room.aiDifficulty });
+      initRoomGame(room);
       await broadcastRoomState(room);
       scheduleBotStep(room, 750);
       if (typeof ack === 'function') ack({ ok: true });
