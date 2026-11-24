@@ -122,6 +122,10 @@ function createGame(playerSpecs, options = {}) {
     id: spec.id,
     name: spec.name,
     isAI: Boolean(spec.isAI),
+    avatarIndex:
+      Number.isInteger(spec.avatarIndex) && spec.avatarIndex >= 0 && spec.avatarIndex < 10
+        ? spec.avatarIndex
+        : null,
     seatIndex: idx,
     money: 100,
     hand: [],
@@ -804,6 +808,7 @@ function getSanitizedState(game, viewerPlayerId) {
       id: p.id,
       name: p.name,
       isAI: p.isAI,
+      avatarIndex: p.avatarIndex ?? null,
       seatIndex: p.seatIndex,
       money: isSelf || isGameOver ? p.money : null,
       hand: isSelf || isGameOver ? p.hand : null,

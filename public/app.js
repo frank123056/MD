@@ -27,22 +27,64 @@
     true
   );
 
-  function getAvatarUrls(name) {
-    const seed = String(name || 'guest').slice(0, 64);
-    let hash = 0;
-    for (let i = 0; i < seed.length; i++) {
-      hash = (hash * 31 + seed.charCodeAt(i)) >>> 0;
+  const AVATAR_CATALOG = [
+    { index: 0, label: '華麗拍賣官' },
+    { index: 1, label: '痛包收藏少女' },
+    { index: 2, label: '精算鑑賞師' },
+    { index: 3, label: '哥德大小姐' },
+    { index: 4, label: '賽博數位買家' },
+    { index: 5, label: '課金石油王' },
+    { index: 6, label: '神秘狐面藝商' },
+    { index: 7, label: '熱血同人繪師' },
+    { index: 8, label: '古董拍賣貴公子' },
+    { index: 9, label: '元氣貓耳競標客' },
+  ];
+
+  const savedAvatar = Number(localStorage.getItem('modernArtAvatarIndex'));
+  let selectedAvatarIndex = Number.isInteger(savedAvatar) && savedAvatar >= 0 && savedAvatar < 10 ? savedAvatar : 0;
+
+  function getAvatarUrls(name, avatarIndex = null) {
+    let idx = Number.isInteger(avatarIndex) && avatarIndex >= 0 && avatarIndex < 10 ? avatarIndex : null;
+    if (idx === null) {
+      const seed = String(name || 'guest').slice(0, 64);
+      let hash = 0;
+      for (let i = 0; i < seed.length; i++) {
+        hash = (hash * 31 + seed.charCodeAt(i)) >>> 0;
+      }
+      idx = hash % 10;
     }
-    const idx = hash % 10;
     return {
-      cdn: `${CDN_ASSETS_BASE}/avatars/avatar_${idx}.png`,
-      local: `/assets/avatars/avatar_${idx}.png`,
+      cdn: `${CDN_ASSETS_BASE}/avatars/avatar_${idx}.jpg`,
+      local: `/assets/avatars/avatar_${idx}.jpg`,
     };
   }
 
-  function renderAvatarImgHtml(name) {
-    const av = getAvatarUrls(name);
+  function renderAvatarImgHtml(name, avatarIndex = null) {
+    const av = getAvatarUrls(name, avatarIndex);
     return `<img class="player-avatar" src="${escapeHtml(av.cdn)}" data-fallback="${escapeHtml(av.local)}" alt="" loading="lazy" />`;
+  }
+
+  function renderAvatarPicker() {
+    const grid = document.getElementById('avatar-picker-grid');
+    const nameEl = document.getElementById('selected-avatar-name');
+    if (!grid) return;
+    if (nameEl) {
+      nameEl.textContent = AVATAR_CATALOG[selectedAvatarIndex]?.label || `角色 #${selectedAvatarIndex}`;
+    }
+    grid.innerHTML = AVATAR_CATALOG.map((item) => {
+      const av = getAvatarUrls(item.label, item.index);
+      const isSelected = item.index === selectedAvatarIndex;
+      return `<button type="button" class="avatar-option ${isSelected ? 'is-selected' : ''}" data-avatar-index="${item.index}" title="${escapeHtml(item.label)}" aria-label="${escapeHtml(item.label)}" aria-pressed="${isSelected ? 'true' : 'false'}">
+        <img src="${escapeHtml(av.cdn)}" data-fallback="${escapeHtml(av.local)}" alt="${escapeHtml(item.label)}" />
+      </button>`;
+    }).join('');
+    grid.querySelectorAll('.avatar-option').forEach((btn) => {
+      btn.addEventListener('click', () => {
+        selectedAvatarIndex = Number(btn.dataset.avatarIndex);
+        localStorage.setItem('modernArtAvatarIndex', String(selectedAvatarIndex));
+        renderAvatarPicker();
+      });
+    });
   }
 
   const AUCTION_META = {
@@ -294,7 +336,12 @@
       btn.addEventListener('click', () => {
         const code = btn.dataset.code;
         inputRoomCode.value = code;
-        emitAction('join_room', { roomCode: code, playerName: getPlayerName(), sessionId });
+        emitAction('join_room', {
+          roomCode: code,
+          playerName: getPlayerName(),
+          avatarIndex: selectedAvatarIndex,
+          sessionId,
+        });
       });
     });
   }
@@ -328,7 +375,7 @@
         const isHost = seat.id === room.hostSessionId;
         seatCards.push(`<div class="seat-card ${isMe ? 'is-me' : ''}">
           <div class="seat-card-head">
-            ${renderAvatarImgHtml(seat.name)}
+            ${renderAvatarImgHtml(seat.name, seat.avatarIndex)}
             <strong>${escapeHtml(seat.name)}</strong>
           </div>
           <div class="seat-badges">
@@ -523,7 +570,7 @@
 
         return `<button type="button" class="player-row ${isTurn ? 'active-turn' : ''} ${isMe ? 'is-me' : ''}" data-player-index="${idx}" title="點擊查看 ${escapeHtml(p.name)} 本季購入的原畫">
           <div class="player-row-identity">
-            ${renderAvatarImgHtml(p.name)}
+            ${renderAvatarImgHtml(p.name, p.avatarIndex)}
             <strong>${escapeHtml(p.name)}</strong>
             ${isMe ? '<span class="badge pink">你</span>' : ''}
             ${p.isAI ? '<span class="badge blue">AI</span>' : ''}
@@ -1328,7 +1375,7 @@
     if (pendingReconnectRoomCode) {
       const code = pendingReconnectRoomCode;
       pendingReconnectRoomCode = null;
-      socket.emit('join_room', { roomCode: code, playerName: getPlayerName(), sessionId }, (res) => {
+      socket.emit('join_room', { roomCode: code, playerName: getPlayerName(), avatarIndex: selectedAvatarIndex, sessionId }, (res) => {
         if (res && !res.ok) {
           showToast(res.error || '房間已逾期關閉，已返回大廳', true);
           renderRoom(null);
@@ -1347,8 +1394,10 @@
   });
 
   // UI Event Bindings
+  renderAvatarPicker();
+
   document.getElementById('btn-create-room').addEventListener('click', () => {
-    emitAction('create_room', { playerName: getPlayerName(), sessionId });
+    emitAction('create_room', { playerName: getPlayerName(), avatarIndex: selectedAvatarIndex, sessionId });
   });
 
   document.getElementById('btn-join-room').addEventListener('click', () => {
@@ -1357,7 +1406,7 @@
       showToast('請先輸入房號', true);
       return;
     }
-    emitAction('join_room', { roomCode: code, playerName: getPlayerName(), sessionId });
+    emitAction('join_room', { roomCode: code, playerName: getPlayerName(), avatarIndex: selectedAvatarIndex, sessionId });
   });
 
   if (btnIdleReconnect) {

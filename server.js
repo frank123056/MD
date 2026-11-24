@@ -10,6 +10,13 @@ const IDLE_TIMEOUT_MS = Number(process.env.IDLE_TIMEOUT_MS) || 15 * 60 * 1000;
 const ROOM_STALE_MS = Number(process.env.ROOM_STALE_MS) || 60 * 60 * 1000;
 const IDLE_CHECK_INTERVAL_MS = Math.min(30000, Math.max(1000, Math.floor(IDLE_TIMEOUT_MS / 3)));
 const BOT_NAMES = ['秋葉原大王 Bot', '同人壁攤大手 Bot', '課金石油王 Bot', '傳說痛車主 Bot', '全婆俠收藏家 Bot'];
+const BOT_SIGNATURE_AVATARS = {
+  '秋葉原大王 Bot': 0,
+  '同人壁攤大手 Bot': 2,
+  '課金石油王 Bot': 5,
+  '傳說痛車主 Bot': 4,
+  '全婆俠收藏家 Bot': 1,
+};
 
 const app = express();
 const server = http.createServer(app);
@@ -74,10 +81,16 @@ app.get('/api/avatar/:seed', (req, res) => {
     hash = (hash * 31 + seed.charCodeAt(i)) >>> 0;
   }
   const avatarIndex = hash % 10;
-  const avatarPath = path.join(__dirname, 'public', 'assets', 'avatars', `avatar_${avatarIndex}.png`);
+  const avatarPath = path.join(__dirname, 'public', 'assets', 'avatars', `avatar_${avatarIndex}.jpg`);
   res.set('Cache-Control', 'public, max-age=86400');
   res.sendFile(avatarPath);
 });
+
+function sanitizeAvatarIndex(val) {
+  if (val === null || val === undefined || val === '') return null;
+  const num = Number(val);
+  return Number.isInteger(num) && num >= 0 && num < 10 ? num : null;
+}
 
 function getSanitizedRoomPayload(room, viewerSessionId) {
   const mySeatIndex = room.seats.findIndex((s) => s.id === viewerSessionId);
@@ -92,6 +105,7 @@ function getSanitizedRoomPayload(room, viewerSessionId) {
       id: s.id,
       name: s.name,
       isAI: s.isAI,
+      avatarIndex: s.avatarIndex ?? null,
       connected: s.isAI ? true : s.connected,
       seatIndex: idx,
     })),
@@ -162,6 +176,7 @@ io.on('connection', (socket) => {
     try {
       const sessionId = String(payload.sessionId || socket.id).slice(0, 64);
       const playerName = sanitizeName(payload.playerName, '畫廊主人');
+      const avatarIndex = sanitizeAvatarIndex(payload.avatarIndex);
       const code = generateRoomCode();
 
       const room = {
@@ -173,6 +188,7 @@ io.on('connection', (socket) => {
             id: sessionId,
             name: playerName,
             isAI: false,
+            avatarIndex,
             connected: true,
           },
         ],
@@ -215,8 +231,10 @@ io.on('connection', (socket) => {
       const existingSeat = room.seats.find((s) => s.id === sessionId);
       if (existingSeat) {
         existingSeat.connected = true;
-        if (!room.game && payload.playerName) {
-          existingSeat.name = playerName;
+        if (!room.game) {
+          if (payload.playerName) existingSeat.name = playerName;
+          const nextAvatar = sanitizeAvatarIndex(payload.avatarIndex);
+          if (nextAvatar !== null) existingSeat.avatarIndex = nextAvatar;
         }
       } else {
         if (room.game) {
@@ -229,6 +247,7 @@ io.on('connection', (socket) => {
           id: sessionId,
           name: playerName,
           isAI: false,
+          avatarIndex: sanitizeAvatarIndex(payload.avatarIndex),
           connected: true,
         });
         room.chat.push({
@@ -292,8 +311,22 @@ io.on('connection', (socket) => {
 
       const usedNames = new Set(room.seats.map((s) => s.name));
       const botName = BOT_NAMES.find((n) => !usedNames.has(n)) || `AI 畫商 #${room.seats.length}`;
+      const takenAvatars = new Set(
+        room.seats.map((s) => s.avatarIndex).filter((v) => v !== null && v !== undefined)
+      );
+      const preferredAvatar = BOT_SIGNATURE_AVATARS[botName];
+      let avatarIndex =
+        preferredAvatar !== undefined && !takenAvatars.has(preferredAvatar) ? preferredAvatar : null;
+      if (avatarIndex === null) {
+        for (let i = 0; i < 10; i++) {
+          if (!takenAvatars.has(i)) {
+            avatarIndex = i;
+            break;
+          }
+        }
+      }
       const botId = `bot_${Date.now()}_${Math.floor(Math.random() * 1000)}`;
-      room.seats.push({ id: botId, name: botName, isAI: true, connected: true });
+      room.seats.push({ id: botId, name: botName, isAI: true, avatarIndex, connected: true });
       room.chat.push({ id: Date.now(), sender: '系統', text: `已加入電腦對手 ${botName}。`, system: true });
 
       await broadcastRoomState(room);
