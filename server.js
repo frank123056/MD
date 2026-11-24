@@ -85,6 +85,7 @@ function getSanitizedRoomPayload(room, viewerSessionId) {
     code: room.code,
     hostSessionId: room.hostSessionId,
     isHost: room.hostSessionId === viewerSessionId,
+    aiDifficulty: room.aiDifficulty || 'master',
     mySessionId: viewerSessionId,
     mySeatIndex,
     seats: room.seats.map((s, idx) => ({
@@ -166,6 +167,7 @@ io.on('connection', (socket) => {
       const room = {
         code,
         hostSessionId: sessionId,
+        aiDifficulty: 'master',
         seats: [
           {
             id: sessionId,
@@ -331,6 +333,26 @@ io.on('connection', (socket) => {
     }
   });
 
+  socket.on('set_ai_difficulty', async (payload = {}, ack) => {
+    try {
+      const room = rooms.get(socket.data.roomCode);
+      if (!room) throw new Error('尚未加入房間');
+      if (room.hostSessionId !== socket.data.sessionId) throw new Error('只有房主可以調整 AI 難度');
+      if (room.game) throw new Error('遊戲已經開始，無法變更 AI 難度');
+
+      const nextDiff = payload.difficulty === 'standard' ? 'standard' : 'master';
+      if (room.aiDifficulty !== nextDiff) {
+        room.aiDifficulty = nextDiff;
+        const label = nextDiff === 'master' ? '🧠 心機高手 AI' : '🌱 一般休閒 AI';
+        room.chat.push({ id: Date.now(), sender: '系統', text: `房主已將電腦對手難度設為「${label}」。`, system: true });
+        await broadcastRoomState(room);
+      }
+      if (typeof ack === 'function') ack({ ok: true, aiDifficulty: room.aiDifficulty });
+    } catch (err) {
+      if (typeof ack === 'function') ack({ ok: false, error: err.message });
+    }
+  });
+
   socket.on('start_game', async (_payload, ack) => {
     try {
       const room = rooms.get(socket.data.roomCode);
@@ -340,7 +362,7 @@ io.on('connection', (socket) => {
         throw new Error('需要 3 到 5 位玩家才能開始遊戲');
       }
 
-      room.game = engine.createGame(room.seats);
+      room.game = engine.createGame(room.seats, { aiDifficulty: room.aiDifficulty });
       await broadcastRoomState(room);
       scheduleBotStep(room, 750);
       if (typeof ack === 'function') ack({ ok: true });
@@ -358,7 +380,7 @@ io.on('connection', (socket) => {
         clearTimeout(room.botTimer);
         room.botTimer = null;
       }
-      room.game = engine.createGame(room.seats);
+      room.game = engine.createGame(room.seats, { aiDifficulty: room.aiDifficulty });
       await broadcastRoomState(room);
       scheduleBotStep(room, 750);
       if (typeof ack === 'function') ack({ ok: true });

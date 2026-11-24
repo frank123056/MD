@@ -315,6 +315,8 @@
   function renderWaitingRoom(room) {
     document.getElementById('waiting-room-code').textContent = room.code;
     const seatsContainer = document.getElementById('waiting-seats');
+    const aiDiff = room.aiDifficulty === 'standard' ? 'standard' : 'master';
+    const aiBadgeLabel = aiDiff === 'master' ? '🧠 高手 AI' : '🌱 休閒 AI';
 
     const seatCards = [];
     for (let i = 0; i < 5; i++) {
@@ -332,7 +334,7 @@
           <div class="seat-badges">
             <span class="badge">座位 ${i + 1}</span>
             ${isHost ? '<span class="badge gold">房主</span>' : ''}
-            ${seat.isAI ? '<span class="badge blue">🤖 電腦 AI</span>' : '<span class="badge green">真人</span>'}
+            ${seat.isAI ? `<span class="badge blue">${aiBadgeLabel}</span>` : '<span class="badge green">真人</span>'}
             ${isMe ? '<span class="badge pink">你</span>' : ''}
           </div>
         </div>`);
@@ -345,6 +347,8 @@
     if (room.isHost) {
       hostControls.classList.remove('hidden');
       guestMsg.classList.add('hidden');
+      const diffSelect = document.getElementById('select-ai-difficulty');
+      if (diffSelect) diffSelect.value = aiDiff;
       document.getElementById('btn-add-bot').disabled = room.seats.length >= 5;
       document.getElementById('btn-remove-bot').disabled = !room.seats.some((s) => s.isAI);
       const startBtn = document.getElementById('btn-start-game');
@@ -355,6 +359,7 @@
     } else {
       hostControls.classList.add('hidden');
       guestMsg.classList.remove('hidden');
+      guestMsg.textContent = `等待房主開始遊戲中...（電腦對手：${aiDiff === 'master' ? '🧠 心機高手 AI' : '🌱 一般休閒 AI'}）`;
     }
 
     renderChatFeed(document.getElementById('waiting-chat-log'), room.chat);
@@ -1375,6 +1380,12 @@
     renderPublicRooms(data.rooms || []);
   });
 
+  const selectAiDifficulty = document.getElementById('select-ai-difficulty');
+  if (selectAiDifficulty) {
+    selectAiDifficulty.addEventListener('change', (e) => {
+      emitAction('set_ai_difficulty', { difficulty: e.target.value });
+    });
+  }
   document.getElementById('btn-add-bot').addEventListener('click', () => emitAction('add_bot'));
   document.getElementById('btn-remove-bot').addEventListener('click', () => emitAction('remove_bot'));
   document.getElementById('btn-start-game').addEventListener('click', () => emitAction('start_game'));

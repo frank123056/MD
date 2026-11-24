@@ -302,4 +302,112 @@ console.log('10. Testing full 4-season simulated bot game...');
   console.log(`   Simulated 4-player bot game completed in ${guard} steps! Winner: ${g.rankings[0].name} ($${g.rankings[0].money})`);
 }
 
+console.log('11. Testing Master AI strategy, hand-aware valuation, opportunity cost, & 40-game benchmark...');
+{
+  // (a) Hand-aware valuation ranks artist held in hand higher than public-only view
+  const gVal = engine.createGame(
+    [
+      { id: 'b0', name: '同人壁攤大手 Bot', isAI: true },
+      { id: 'b1', name: 'P1', isAI: true },
+      { id: 'b2', name: 'P2', isAI: true },
+    ],
+    { aiDifficulty: 'master' }
+  );
+  gVal.seasonCounts = [1, 1, 1, 0, 0];
+  gVal.players[0].hand = [
+    makeCard('m1', 4, 'open'),
+    makeCard('m2', 4, 'open'),
+    makeCard('m3', 4, 'open'),
+    makeCard('m4', 4, 'double'),
+  ];
+  const publicVals = botEngine.estimateArtistValues(gVal);
+  const privateVals = botEngine.estimateArtistValues(gVal, 0);
+  assert.ok(privateVals[4] > publicVals[4], `Expected hand-aware value for A4 (${privateVals[4]}) > public (${publicVals[4]})`);
+
+  // (b) Opportunity cost: sole auctioneer passes on high bid (60%), steals cheap bid with +$1 on last turn
+  const gOpp = engine.createGame(
+    [
+      { id: 'b0', name: '同人壁攤大手 Bot', isAI: true },
+      { id: 'p1', name: 'Human 1', isAI: false },
+      { id: 'p2', name: 'Human 2', isAI: false },
+    ],
+    { aiDifficulty: 'master' }
+  );
+  gOpp.seasonCounts = [3, 1, 0, 0, 0];
+  gOpp.players[0].hand = [makeCard('oa1', 0, 'once_around'), makeCard('oa2', 1, 'open')];
+  gOpp.players[1].hand = [makeCard('h1', 0, 'open'), makeCard('h2', 1, 'open')];
+  gOpp.players[2].hand = [makeCard('h3', 0, 'open'), makeCard('h4', 1, 'open')];
+
+  engine.playCard(gOpp, 0, 'oa1'); // A0 is now 4 cards ($30)
+  engine.placeBid(gOpp, 1, { amount: 18 }); // 60% of 30
+  engine.placeBid(gOpp, 2, { pass: true });
+  assert.strictEqual(botEngine.performBotStep(gOpp), true); // P0 auctioneer must pass and collect $18
+  assert.strictEqual(gOpp.players[0].money, 118);
+
+  // Cheap bid ($9): P0 should bid exact +$1 ($10) on final turn
+  gOpp.turnPlayerIndex = 0;
+  gOpp.players[0].hand = [makeCard('oa_cheap', 0, 'once_around')];
+  gOpp.seasonCounts = [3, 1, 0, 0, 0];
+  engine.playCard(gOpp, 0, 'oa_cheap');
+  engine.placeBid(gOpp, 1, { amount: 9 });
+  engine.placeBid(gOpp, 2, { pass: true });
+  assert.strictEqual(botEngine.performBotStep(gOpp), true);
+  assert.strictEqual(gOpp.lastAuctionSummary.winnerIndex, 0);
+  assert.strictEqual(gOpp.lastAuctionSummary.price, 10);
+
+  // (c) 5th-card sniper: detonates when profitable, avoids when helping opponent
+  const gSnipe = makeTestGame(3);
+  gSnipe.aiDifficulty = 'master';
+  gSnipe.players.forEach((p) => (p.isAI = true));
+  gSnipe.seasonCounts = [3, 0, 0, 4, 0];
+  gSnipe.players[0].purchased = [makeCard('s0', 3, 'open'), makeCard('s1', 3, 'open')];
+  gSnipe.players[1].purchased = [makeCard('s2', 0, 'open')];
+  gSnipe.players[0].hand = [makeCard('bomb3', 3, 'open'), makeCard('safe4', 4, 'open')];
+  assert.strictEqual(botEngine.chooseCardToPlay(gSnipe, 0).id, 'bomb3');
+
+  gSnipe.seasonCounts = [0, 0, 0, 4, 2];
+  gSnipe.players[0].purchased = [];
+  gSnipe.players[1].purchased = [makeCard('o1', 3, 'open'), makeCard('o2', 3, 'open'), makeCard('o3', 3, 'open')];
+  gSnipe.players[0].hand = [makeCard('bad3', 3, 'open'), makeCard('good4', 4, 'open')];
+  assert.strictEqual(botEngine.chooseCardToPlay(gSnipe, 0).id, 'good4');
+
+  // (d) 40-game seat-balanced benchmark: Master AI vs Standard AI
+  const GAMES = 40;
+  let masterMoneySum = 0;
+  let standardMoneySum = 0;
+  let masterWins = 0;
+  for (let n = 0; n < GAMES; n++) {
+    const swap = n % 2 === 1;
+    const gBench = engine.createGame([
+      { id: 'p0', name: '課金石油王 Bot', isAI: true },
+      { id: 'p1', name: '同人壁攤大手 Bot', isAI: true },
+      { id: 'p2', name: '秋葉原大王 Bot', isAI: true },
+      { id: 'p3', name: '傳說痛車主 Bot', isAI: true },
+    ]);
+    gBench.players.forEach((p, idx) => {
+      const isEven = idx % 2 === 0;
+      p.aiDifficulty = swap ? (isEven ? 'standard' : 'master') : isEven ? 'master' : 'standard';
+    });
+    let steps = 0;
+    while (gBench.phase !== 'GAME_OVER' && steps < 5000) {
+      steps++;
+      if (gBench.phase === 'SEASON_SETTLEMENT') engine.startNextSeason(gBench);
+      else assert.ok(botEngine.performBotStep(gBench));
+    }
+    assert.strictEqual(gBench.phase, 'GAME_OVER');
+    gBench.players.forEach((p) => {
+      if (p.aiDifficulty === 'master') masterMoneySum += p.money;
+      else standardMoneySum += p.money;
+    });
+    const winnerPlayer = gBench.players.find((p) => p.id === gBench.rankings[0].id);
+    if (winnerPlayer.aiDifficulty === 'master') masterWins++;
+  }
+  const masterAvg = masterMoneySum / (GAMES * 2);
+  const standardAvg = standardMoneySum / (GAMES * 2);
+  console.log(
+    `   40-game benchmark (2 Master vs 2 Standard): Master avg=$${masterAvg.toFixed(1)}, Standard avg=$${standardAvg.toFixed(1)}, Master win rate=${masterWins}/${GAMES}`
+  );
+  assert.ok(masterAvg > standardAvg, `Master AI avg ($${masterAvg}) should beat Standard AI avg ($${standardAvg})`);
+}
+
 console.log('ALL TESTS PASSED!');

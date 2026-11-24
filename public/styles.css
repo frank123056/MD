@@ -223,6 +223,23 @@ input:focus {
   box-shadow: 0 0 0 2px rgba(234, 179, 8, 0.22);
 }
 
+.ai-difficulty-select {
+  border-radius: 10px;
+  border: 1px solid var(--border);
+  background: var(--surface-soft);
+  color: var(--text);
+  padding: 0.52rem 0.85rem;
+  font-size: 0.88rem;
+  font-weight: 600;
+  cursor: pointer;
+  outline: none;
+}
+
+.ai-difficulty-select:focus {
+  border-color: var(--gold);
+  box-shadow: 0 0 0 2px rgba(234, 179, 8, 0.22);
+}
+
 .card-panel {
   background: var(--surface);
   border: 1px solid var(--border);
